@@ -1,6 +1,7 @@
 <script>
   import Button from "../../components/Button.svelte";
   import {PUBLIC_BACKEND_BASE_URL} from '$env/static/public';
+  import {authenticateUser} from '../../utils/auth'
   
 
   let isFormSubmitting = false;
@@ -15,16 +16,9 @@
       password: evt.target['password'].value
     };
 
-    const resp = await fetch(PUBLIC_BACKEND_BASE_URL + '/signin',{
-      method: 'POST',
-      mode: 'cors',
-      headers:{
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(userData)
-    });
+    const res = await authenticateUser(userData.email,userData.password);
 
-    if (resp.status == 200){
+    if (res.success){
       console.log('success!')
     } else{
       console.log('failed!')
