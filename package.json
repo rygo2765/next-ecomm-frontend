@@ -25,6 +25,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"daisyui": "^2.50.2"
+		"daisyui": "^2.50.2",
+		"jsonwebtoken": "^9.0.0"
 	}
 }
