@@ -1,22 +1,27 @@
 <script>
   import {PUBLIC_BACKEND_BASE_URL} from '$env/static/public';
   import Button from '../../../components/Button.svelte';
+	import {goto} from '$app/navigation';
 
-	// let formErrors = {};
+	let formErrors = {};
   let isFormSubmitting = false;
+
+	async function postSignUp(){
+		goto('/');
+	}
 
 	async function createUser(evt){
 		evt.preventDefault();
 		
-		// if (evt.target['password'].value != evt.target['password-confirmation'].value) {
-		// 	formErrors['password'] = {message: 'Password confirmation does not match'};
-		// 	return;
-		// }
+		if (evt.target['password'].value != evt.target['password-confirmation'].value) {
+			formErrors['password'] = 'Password confirmation does not match';
+			return;
+		}
     
 		isFormSubmitting = true;
 
 		const userData = {
-			name: evt.target['username'].value,
+			name: evt.target['name'].value,
 			email: evt.target['email'].value,
 			password: evt.target['password'].value
 		}
@@ -31,9 +36,12 @@
 		});
 
 		if (resp.status == 200){
-			console.log(resp.body)
+			postSignUp();
+		} else {
+			const res = await resp.json();
+			formErrors = res.error;
+			isFormSubmitting = false;
 		}
-
 	}
 </script>
 
@@ -48,15 +56,20 @@
 
     <!--Name input-->
     <div class="form-control w-full">
-      <label class="label" for="username">
+      <label class="label" for="name">
 				<span class="label-text">Name</span>
 			</label>
 			<input
 				type="text"
-				name="username"
+				name="name"
 				placeholder="johndoe"
 				class="input input-bordered w-full"
 			/>
+			{#if 'name' in formErrors}
+			  <label class="label" for="name">
+					<span class="label-text-alt text-red-500">{formErrors['name']}</span>
+				</label>
+			{/if}
     </div>
 
 		<!-- Email input -->
@@ -71,6 +84,11 @@
 				class="input input-bordered w-full"
 				required
 			/>
+			{#if 'email' in formErrors}
+			  <label class="label" for="email">
+					<span class="label-text-alt text-red-500">{formErrors['email']}</span>
+				</label>
+			{/if}
 		</div>
 
 		<!--Password Input-->
@@ -85,6 +103,11 @@
 				class="input input-bordered w-full"
 				required
 			/>
+			{#if 'password' in formErrors}
+			  <label class="label" for="password">
+					<span class="label-text-alt text-red-500">{formErrors['password']}</span>
+				</label>
+			{/if}
 		</div>
 
     <!--Password Confirmation Input-->
@@ -99,6 +122,11 @@
 				class="input input-bordered w-full"
 				required
 			/>
+			{#if 'password' in formErrors}
+			  <label class="label" for="password">
+					<span class="label-text-alt text-red-500">{formErrors['password']}</span>
+				</label>
+			{/if}
 		</div>
 
     <!--Create Account Button-->
