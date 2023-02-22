@@ -1,6 +1,5 @@
 <script>
   import Button from "../../components/Button.svelte";
-  import {PUBLIC_BACKEND_BASE_URL} from '$env/static/public';
   import {authenticateUser} from '../../utils/auth'
   
 

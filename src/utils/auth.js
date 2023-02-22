@@ -27,10 +27,11 @@ export async function authenticateUser(email, password) {
   )
 
   const res = await resp.json();
+  console.log(res)
 
   if (resp.status==200) {
     localStorage.setItem("auth", JSON.stringify({
-      "token": res.token  
+      "token": res.accessToken  
     }))
 
     isLoggedIn.set(true)
