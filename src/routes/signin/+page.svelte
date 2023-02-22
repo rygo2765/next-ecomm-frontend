@@ -1,13 +1,17 @@
 <script>
   import Button from "../../components/Button.svelte";
   import {authenticateUser} from '../../utils/auth'
-  
+  import { goto } from '$app/navigation';
+  import {alerts} from '../../utils/alert'
 
   let isFormSubmitting = false;
+  let loginFail = false;
+  let formErrors = {};
 
   async function loginUser(evt){
     evt.preventDefault();
 
+    loginFail = false;
     isFormSubmitting = true;
 
     const userData = {
@@ -18,9 +22,17 @@
     const res = await authenticateUser(userData.email,userData.password);
 
     if (res.success){
-      console.log('success!')
+      alerts.clearAlert();
+      goto('/') //need to change once post page is created
     } else{
-      console.log('failed!')
+      formErrors = res.res.error;
+      if ('login' in formErrors){
+        alerts.setAlert(formErrors['login'],'alert-error')
+        setTimeout(() => {
+          alerts.clearAlert();
+        }, 1000);
+      }
+      isFormSubmitting = false;
     }
   }
 
@@ -41,6 +53,11 @@
       </label>
       <input type="text" name="email" placeholder="johndoe@example.com"
       class="input input-bordered w-full">
+      {#if 'email' in formErrors}
+        <label class="label" for="email">
+					<span class="label-text-alt text-red-500">{formErrors['email']}</span>
+				</label>
+      {/if}
     </div>
 
     <!--Password Input-->
@@ -50,12 +67,16 @@
       </label>
       <input type="text" name="password" placeholder="" class="input input-bordered w-full"
       required/>
+      {#if 'password' in formErrors}
+        <label class="label" for="password">
+					<span class="label-text-alt text-red-500">{formErrors['password']}</span>
+				</label>
+      {/if}
+    </div>
 
     <!--Sign In Button-->
     <div class="form-control w-full mt-4">
       <Button standard="Log In" loading="Logging In" clicked={isFormSubmitting} />
-
-    </div>
     </div>
   </form>
 </div>
