@@ -1,5 +1,6 @@
 <script>
   import "../app.css";
+  import Alerts from "../components/Alerts.svelte";
 </script>
 
 <header class="flex flex-row justify-between bg-primary text-white p-2">
@@ -13,6 +14,10 @@
     </ul>
   </div>
 </header>
+
+<div class="mt-4">
+  <Alerts/>
+</div>
 
 
 <slot />
