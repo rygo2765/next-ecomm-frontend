@@ -12,7 +12,7 @@ export const isLoggedIn = writable(false)
 //Authenticate user
 export async function authenticateUser(email, password) {
   const resp = await fetch(
-    PUBLIC_BACKEND_BASE_URL + '/signin',
+    PUBLIC_BACKEND_BASE_URL + '/auth',
     {
       method: 'POST',
       mode: 'cors',
