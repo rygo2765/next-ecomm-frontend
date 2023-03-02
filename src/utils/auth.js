@@ -12,10 +12,20 @@ export const isLoggedIn = writable(false)
 //log users out and empties token 
 export function logOut(){
   isLoggedIn.set(false)
-  localStorage.setItem("auth",JSON.stringify(emptyAuth))
+  localStorage.removeItem('auth')
   return true
 }
 
+//check if token is in local storage
+export function checkLoggedIn(){
+  const auth = localStorage.getItem('auth')
+  if (auth){
+    isLoggedIn.set(true)
+    return true
+  }
+  isLoggedIn.set(false)
+  return null
+}
 
 //Authenticate user
 export async function authenticateUser(email, password) {

@@ -1,7 +1,13 @@
 <script>
   import "../app.css";
   import Alerts from "../components/Alerts.svelte";
-  import {isLoggedIn} from '../utils/auth.js'
+  import {isLoggedIn, logOut} from '../utils/auth.js'
+  import {goto} from '$app/navigation'
+
+  function signOut(){
+    logOut()
+    goto('/signin')
+  }
 </script>
 
 <header class="flex flex-row justify-between bg-primary text-white p-2">
@@ -10,9 +16,9 @@
     <ul class="menu menu-horizontal px-1">
       <li><a href="/users/new" class="btn btn-ghost">Sign Up</a></li>
     </ul>
-    {#if $isLoggedIn == true}
+    {#if $isLoggedIn}
     <ul class="menu menu-horizontal px-1">
-      <li><button class="btn btn-ghost">Sign out</button></li>
+      <li><button class="btn btn-ghost" on:click={signOut}>Sign out</button></li>
     </ul>
     {:else}
      <ul class="menu menu-horizontal px-1">
