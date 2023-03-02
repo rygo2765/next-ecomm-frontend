@@ -6,7 +6,7 @@
 
   function signOut(){
     logOut()
-    goto('/signin')
+    goto('/')
   }
 </script>
 

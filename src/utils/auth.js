@@ -1,11 +1,6 @@
 import {PUBLIC_BACKEND_BASE_URL} from '$env/static/public'
 import {writable} from 'svelte/store'
 
-
-const emptyAuth={
-  "token": "",
-}
-
 //change user login status in local storage
 export const isLoggedIn = writable(false)
 

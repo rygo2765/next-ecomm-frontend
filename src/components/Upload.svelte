@@ -1,19 +1,22 @@
 <script>
   import { uploadMedia } from '../utils/s3-uploader.js';
   import {PUBLIC_BACKEND_BASE_URL} from '$env/static/public';
+  import Button from './Button.svelte';
+
+  let isImageUploading = false;
+  let uploadSuccess = false;
 
   async function uploadImage(evt) {
     evt.preventDefault();
 
+    isImageUploading = true;
+
     const [fileName, fileUrl] = await uploadMedia(evt.target['file'].files[0]);
-    // code to make POST request to your backend
 
     const { token } = (() => {
        const token = localStorage.getItem('auth');
        return JSON.parse(token);
       })();
-
-    console.log(token);
 
     const imageData = { 
       title: evt.target['title'].value,
@@ -34,10 +37,15 @@
 
     if (resp.status == 200){
       console.log("success")
+      uploadSuccess = true
+      setTimeout(()=>{
+        uploadSuccess = false
+      }, 3000);
     } else {
       console.log("fail")
     }
 
+    isImageUploading = false;
   }
 </script>
 
@@ -53,58 +61,61 @@
 <label for="my-modal-4" class="modal cursor-pointer">
   <label class="modal-box relative" for="">
 
-    <form on:submit|preventDefault={uploadImage} class="w-full">
-      <!--Image upload-->
-      <div class="form-control w-full mt-2">
-        <input type="file" name="file" />
-      </div>
-      
-      <!--Title Input-->
-      <div class="form-control w-full">
-        <label class="label" for="title">
-          <span class="label-text">Title</span>
-        </label>
-        <input
-          type="text"
-          name="title"
-          placeholder=""
-          class="input input-bordered w-full"
-          required
-        />
-      </div>
-
-      <!--Description Input-->
-      <div class="form-control w-full">
-        <label class="label" for="description">
-          <span class="label-text">Description</span>
-        </label>
-        <input
-          type="text"
-          name="description"
-          placeholder=""
-          class="input input-bordered w-full"
-          required
-        />
-      </div>
-
-      <!--Price Input-->
-      <div class="form-control w-full">
-          <label class="label" for="price">
-            <span class="label-text">Price</span>
+    {#if uploadSuccess}
+     <h3 class="text-lg items-center font-bold">Sucessfully Uploaded!</h3>
+    {:else}
+      <form on:submit|preventDefault={uploadImage} class="w-full">
+        <!--Image upload-->
+        <div class="form-control w-full mt-2">
+          <input type="file" name="file" />
+        </div>
+        
+        <!--Title Input-->
+        <div class="form-control w-full">
+          <label class="label" for="title">
+            <span class="label-text">Title</span>
           </label>
           <input
-            type="number"
-            name="price"
-            placeholder=""
+            type="text"
+            name="title"
+            placeholder="Penguin"
             class="input input-bordered w-full"
             required
           />
-      </div>
+        </div>
 
-      <div class="form-control w-full mt-4">
-        <button class="btn btn-md">Upload</button>
-      </div>
-    </form>
+        <!--Price Input-->
+        <div class="form-control w-full">
+            <label class="label" for="price">
+              <span class="label-text">Price</span>
+            </label>
+            <input
+              type="text"
+              name="price"
+              placeholder="1.23"
+              pattern="[0-9]+([\.][0-9]+)?"
+              class="input input-bordered w-full"
+              required
+            />
+        </div>
+
+        <!--Description Input-->
+        <div class="form-control w-full">
+          <label class="label" for="description">
+            <span class="label-text">Description</span>
+          </label>
+          <textarea 
+          name="description" 
+          class="textarea textarea-bordered w-full"
+          placeholder="Penguins having fun" />
+        </div>
+
+        
+        <div class="form-control w-full mt-4">
+          <Button standard="Upload Image" loading="Uploading Image" clicked={isImageUploading} />
+        </div>
+      </form>
+    {/if}
   </label>
 </label>
 
