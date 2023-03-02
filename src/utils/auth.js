@@ -9,6 +9,14 @@ const emptyAuth={
 //change user login status in local storage
 export const isLoggedIn = writable(false)
 
+//log users out and empties token 
+export function logOut(){
+  isLoggedIn.set(false)
+  localStorage.setItem("auth",JSON.stringify(emptyAuth))
+  return true
+}
+
+
 //Authenticate user
 export async function authenticateUser(email, password) {
   const resp = await fetch(

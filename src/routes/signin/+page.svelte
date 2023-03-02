@@ -1,8 +1,8 @@
 <script>
   import Button from "../../components/Button.svelte";
-  import {authenticateUser} from '../../utils/auth'
+  import {authenticateUser} from '../../utils/auth.js'
   import { goto } from '$app/navigation';
-  import {alerts} from '../../utils/alert'
+  import {alerts} from '../../utils/alert.js'
 
   let isFormSubmitting = false;
   let loginFail = false;
