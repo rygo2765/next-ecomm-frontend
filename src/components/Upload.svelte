@@ -1,17 +1,56 @@
 <script>
-  import { uploadMedia } from '../utils/s3-uploader.js';
+  import { generateUniqueFileName, uploadMedia } from '../utils/s3-uploader.js';
   import {PUBLIC_BACKEND_BASE_URL} from '$env/static/public';
   import Button from './Button.svelte';
 
   let isImageUploading = false;
   let uploadSuccess = false;
+  let formErrors = {};
+
+  function isValidForm(target){
+    formErrors = {}
+
+    const title = target['title'].value;
+    const description = target['description'].value
+    const price = target['price'].value
+
+    if (price.length == 0){
+      formErrors['price'] = 'cannot be blank'
+    }
+
+    if (title.length == 0){
+      formErrors['title'] = 'cannot be blank'
+    }
+    
+    if (description.length == 0){
+      formErrors['description'] = 'cannot be blank'
+    }
+
+    // checks whether there was a file attached or not
+    if (typeof images === 'undefined') {
+      formErrors['file'] = 'no file uploaded';
+
+    // checks if the file attached is of image type
+    } else if (!images[0].type.includes('image')) {
+      formErrors['file'] = 'must be an image';
+    }
+
+    return Object.keys(formErrors).length == 0;
+  }
 
   async function uploadImage(evt) {
     evt.preventDefault();
 
     isImageUploading = true;
 
-    const [fileName, fileUrl] = await uploadMedia(evt.target['file'].files[0]);
+    if (!isValidForm(evt.target)){
+      isImageUploading = false;
+      return;
+    }
+
+    const renamedImage = generateUniqueFileName(evt.target['file'].files[0])
+
+    const [fileName, fileUrl] = await uploadMedia(renamedImage);
 
     const { token } = (() => {
        const token = localStorage.getItem('auth');
@@ -36,13 +75,14 @@
     })
 
     if (resp.status == 200){
-      console.log("success")
       uploadSuccess = true
       setTimeout(()=>{
         uploadSuccess = false
       }, 3000);
     } else {
-      console.log("fail")
+      const res = await resp.json();
+			formErrors = res.error;
+      isImageUploading = false;
     }
 
     isImageUploading = false;
@@ -63,6 +103,7 @@
 
     {#if uploadSuccess}
      <h3 class="text-lg items-center font-bold">Sucessfully Uploaded!</h3>
+
     {:else}
       <form on:submit|preventDefault={uploadImage} class="w-full">
         <!--Image upload-->
@@ -82,6 +123,11 @@
             class="input input-bordered w-full"
             required
           />
+          {#if 'title' in formErrors}
+            <label class="label" for="title">
+              <span class="label-text-alt text-red-500">{formErrors['title']}</span>
+            </label>
+          {/if}
         </div>
 
         <!--Price Input-->
@@ -97,6 +143,11 @@
               class="input input-bordered w-full"
               required
             />
+            {#if 'price' in formErrors}
+            <label class="label" for="price">
+              <span class="label-text-alt text-red-500">{formErrors['price']}</span>
+            </label>
+          {/if}
         </div>
 
         <!--Description Input-->
@@ -108,14 +159,19 @@
           name="description" 
           class="textarea textarea-bordered w-full"
           placeholder="Penguins having fun" />
+          {#if 'description' in formErrors}
+            <label class="label" for="description">
+              <span class="label-text-alt text-red-500">{formErrors['description']}</span>
+            </label>
+          {/if}
         </div>
 
-        
         <div class="form-control w-full mt-4">
           <Button standard="Upload Image" loading="Uploading Image" clicked={isImageUploading} />
         </div>
       </form>
     {/if}
+
   </label>
 </label>
 

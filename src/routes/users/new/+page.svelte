@@ -36,6 +36,7 @@
 		});
 
 		if (resp.status == 200){
+			console.log("here")
 			postSignUp();
 		} else {
 			const res = await resp.json();
