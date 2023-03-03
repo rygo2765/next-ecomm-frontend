@@ -7,12 +7,21 @@
   let uploadSuccess = false;
   let formErrors = {};
 
+  function isValidPrice(price){
+    const isNumber = /^\d+(\.\d{1,2})?$/;
+    return isNumber.test(price);
+  }
+
   function isValidForm(target){
     formErrors = {}
 
     const title = target['title'].value;
     const description = target['description'].value
     const price = target['price'].value
+
+    if(!isValidPrice(price)){
+      formErrors['price'] = 'must be number with at most 2 decimals'
+    }
 
     if (price.length == 0){
       formErrors['price'] = 'cannot be blank'
@@ -109,6 +118,11 @@
         <!--Image upload-->
         <div class="form-control w-full mt-2">
           <input type="file" name="file" />
+          {#if 'file' in formErrors}
+            <label class="label" for="file">
+              <span class="label-text-alt text-red-500">{formErrors['file']}</span>
+            </label>
+          {/if}
         </div>
         
         <!--Title Input-->
@@ -139,7 +153,6 @@
               type="text"
               name="price"
               placeholder="1.23"
-              pattern="[0-9]+([\.][0-9]+)?"
               class="input input-bordered w-full"
               required
             />
