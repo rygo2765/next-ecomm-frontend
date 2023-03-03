@@ -7,17 +7,20 @@
   let uploadSuccess = false;
   let formErrors = {};
 
+  //Check price is in correct format
   function isValidPrice(price){
     const isNumber = /^\d+(\.\d{1,2})?$/;
     return isNumber.test(price);
   }
 
+  //Check upload image inputs are valid
   function isValidForm(target){
     formErrors = {}
 
     const title = target['title'].value;
     const description = target['description'].value
     const price = target['price'].value
+    const images = target['file'].files
 
     if(!isValidPrice(price)){
       formErrors['price'] = 'must be number with at most 2 decimals'
@@ -112,6 +115,8 @@
 
     {#if uploadSuccess}
      <h3 class="text-lg items-center font-bold">Sucessfully Uploaded!</h3>
+
+    
 
     {:else}
       <form on:submit|preventDefault={uploadImage} class="w-full">
