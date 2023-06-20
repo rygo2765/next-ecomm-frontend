@@ -65,7 +65,7 @@
       <label class="label" for="password">
         <span class="label-text">Password</span>
       </label>
-      <input type="text" name="password" placeholder="" class="input input-bordered w-full"
+      <input type="password" name="password" placeholder="" class="input input-bordered w-full"
       required/>
       {#if 'password' in formErrors}
         <label class="label" for="password">

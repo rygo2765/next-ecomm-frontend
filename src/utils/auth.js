@@ -11,15 +11,58 @@ export function logOut(){
   return true
 }
 
-//check if token is in local storage
-export function checkLoggedIn(){
+//get token from local storage
+export function getTokenFromLocalStorage(){
   const auth = localStorage.getItem('auth')
   if (auth){
-    isLoggedIn.set(true)
-    return true
+    console.log('test')
+    return JSON.parse(auth)['token']
   }
-  isLoggedIn.set(false)
   return null
+}
+
+//check if token is in local storage
+export async function checkLoggedIn(){
+  if (!getTokenFromLocalStorage()){
+    return false
+  }
+
+  console.log(1)
+  try{
+    const token = getTokenFromLocalStorage()
+    const resp = await fetch(PUBLIC_BACKEND_BASE_URL + '/auth-refresh',
+    {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    console.log(2)
+    const res = await resp.json()
+
+    if (resp.status == 200){
+      localStorage.setItem("auth", JSON.stringify({
+       "token": res.accessToken  
+    }))
+
+    isLoggedIn.set(true)
+  }
+
+  return false
+  
+} catch(err){
+  console.log(err)
+  return false
+}
+// const auth = localStorage.getItem('auth')
+  // if (auth){
+  //   isLoggedIn.set(true)
+  //   return true
+  // }
+  // isLoggedIn.set(false)
+  // return null
 }
 
 //Authenticate user
@@ -40,6 +83,7 @@ export async function authenticateUser(email, password) {
   )
 
   const res = await resp.json();
+  console.log(res)
 
   if (resp.status==200) {
     localStorage.setItem("auth", JSON.stringify({
