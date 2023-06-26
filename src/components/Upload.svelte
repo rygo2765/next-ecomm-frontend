@@ -1,5 +1,6 @@
 <script>
   import { generateUniqueFileName, uploadMedia } from '../utils/s3-uploader.js';
+  import { getTokenFromLocalStorage } from '../utils/auth.js';
   import {PUBLIC_BACKEND_BASE_URL} from '$env/static/public';
   import Button from './Button.svelte';
 
@@ -64,10 +65,7 @@
 
     const [fileName, fileUrl] = await uploadMedia(renamedImage);
 
-    const { token } = (() => {
-       const token = localStorage.getItem('auth');
-       return JSON.parse(token);
-      })();
+    const token = getTokenFromLocalStorage();
 
     const imageData = { 
       title: evt.target['title'].value,

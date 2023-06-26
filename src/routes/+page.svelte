@@ -11,7 +11,7 @@ async function checkoutItem(id){
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify({id})
+		// body: JSON.stringify({id})
     })
 
     if (resp.ok){
@@ -19,6 +19,23 @@ async function checkoutItem(id){
         window.location = url
     }
 }
+// async function checkOut(id) {
+// 		const resp = await fetch(PUBLIC_BACKEND_BASE_URL + '/create-checkout-session', {
+// 			method: 'POST',
+// 			mode: 'cors',
+// 			headers: {
+// 				'Content-Type': 'application/json'
+// 			},
+// 			body: JSON.stringify({id})
+// 		});
+
+// 		const res = await resp.json();
+// 		console.log(res);
+// 		if (resp.status == 200) {
+// 			goto(res.url);
+// 		}
+// 	}
+
 </script>
 
 {#if $isLoggedIn}
@@ -34,9 +51,13 @@ async function checkoutItem(id){
         <div class="card-body">
             <h2 class="card-title">{image.title}</h2>
             <p>{image.description}</p>
-            <div class="card-actions justify-end">
-            <button class="btn btn-primary" on:click={() => checkoutItem(image.id)}>Buy Now</button>
-            </div>
+            <div class="card-actions justify-between">
+                <div class="flex items-center">
+                  <span class="text-lg font-semibold text-primary">${image.price/100}</span>
+                  <span class="text-xs text-gray-500 ml-2">USD</span>
+                </div>
+                <button class="btn btn-primary" on:click={() => checkoutItem(image.id)}>Buy Now</button>
+              </div>
         </div>
         </div>
     {/each}

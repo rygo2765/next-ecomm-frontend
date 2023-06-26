@@ -15,7 +15,6 @@ export function logOut(){
 export function getTokenFromLocalStorage(){
   const auth = localStorage.getItem('auth')
   if (auth){
-    console.log('test')
     return JSON.parse(auth)['token']
   }
   return null
